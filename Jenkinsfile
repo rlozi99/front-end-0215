@@ -26,8 +26,8 @@ pipeline {
                         sh "az acr login --name $CONTAINER_REGISTRY --username $ACR_USERNAME --password $ACR_PASSWORD"
 
                         // Build and push Docker image to ACR
-                        sh "docker build -t $REPO:$TAG ."
-                        sh "docker tag $REPO:$TAG $CONTAINER_REGISTRY/$IMAGE_NAME"
+                        // 변경: 이미지 이름을 $CONTAINER_REGISTRY/$IMAGE_NAME으로 수정
+                        sh "docker build -t $CONTAINER_REGISTRY/$IMAGE_NAME ."
                         sh "docker push $CONTAINER_REGISTRY/$IMAGE_NAME"
                     }
                 }
