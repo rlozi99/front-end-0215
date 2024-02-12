@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: front
 spec:
   replicas: 3  # 배포할 포드의 개수
   selector:
     matchLabels:
-      app: my-app
+      app: front
   template:
     metadata:
       labels:
-        app: my-app
+        app: front
     spec:
       containers:
-        - name: my-container
+        - name: front-container
           image: goodacr.azurecr.io/kwujio/front:latest  # ACR에 올린 이미지 경로와 태그를 지정
           ports:
             - containerPort: 8080
