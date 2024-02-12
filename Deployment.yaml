@@ -16,4 +16,4 @@ spec:
         - name: my-container
           image: goodacr.azurecr.io/kwujio/front:latest  # ACR에 올린 이미지 경로와 태그를 지정
           ports:
-            - containerPort: 80
+            - containerPort: 8080
