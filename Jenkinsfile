@@ -2,28 +2,28 @@ pipeline {
     agent any
 
     environment {
-        AZURE_SUBSCRIPTION_ID = 'c18eced3-5492-4dc9-b1ee-9b278abfdd7f'
+        AZURE_SUBSCRIPTION_ID = 'c8ce3edc-0522-48a3-b7e4-afe8e3d731d9'
         AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
         CONTAINER_REGISTRY = 'goodbirdacr'
         RESOURCE_GROUP = 'AKS'
-        REPO = 'Medicine/front'
-        IMAGE_NAME = 'Medicine/front:latest'
+        REPO = 'medicine/front'
+        IMAGE_NAME = 'medicine/front:latest'
+
         TAG_VERSION = "v1.0.Beta"
         TAG = "${TAG_VERSION}${env.BUILD_ID}"
         NAMESPACE = 'front'
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
-        GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
     }
 
 
     stages {
-        stage('Checkout Frontend') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build and Push Docker Image to ACR') {
+        stage('Build and Push Docker Image to ACR..') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'acr-credential-id', passwordVariable: 'ACR_PASSWORD', usernameVariable: 'ACR_USERNAME')]) {
@@ -38,28 +38,25 @@ pipeline {
                 }
             }
         }
-
         stage('Checkout GitOps') {
-            steps {
-                // 'front_gitops' 저장소에서 파일들을 체크아웃합니다.
-                git branch: 'main',
-                    credentialsId: 'jenkins-git-access',
-                    url: 'https://github.com/JoEunSae/front-end.git'
-            }
-        }
-
-        stage('Update Kubernetes Configuration') {
-            steps {
-                script {
-                    // kustomize를 사용하여 Kubernetes 구성 업데이트
-                    // dir('gitops') 블록을 제거합니다.
-                    sh "kustomize edit set image ${CONTAINER_REGISTRY}/${REPO}=${CONTAINER_REGISTRY}/${REPO}:${TAG}"
-                    sh "git add ."
-                    sh "git commit -m 'Update image to ${TAG}'"
+                    steps {
+                        // 'front_gitops' 저장소에서 파일들을 체크아웃합니다.
+                        git branch: 'main',
+                            credentialsId: 'jenkins-git-access',
+                            url: 'https://github.com/rlozi99/front_gitops'
+                    }
                 }
-            }
-        }
-
+        stage('Update Kubernetes Configuration') {
+                    steps {
+                        script {
+                            // kustomize를 사용하여 Kubernetes 구성 업데이트
+                            // dir('gitops') 블록을 제거합니다.
+                            sh "kustomize edit set image ${CONTAINER_REGISTRY}/${REPO}=${CONTAINER_REGISTRY}/${REPO}:${TAG}"
+                            sh "git add ."
+                            sh "git commit -m 'Update image to ${TAG}'"
+                        }
+                    }
+                }
         stage('Push Changes to GitOps Repository') {
             steps {
                 script {
@@ -69,11 +66,9 @@ pipeline {
                         if (currentBranch != "main") {
                             sh "git checkout main"
                         }
-
                         // 원격 저장소에서 최신 변경사항 가져오기
                         sh "git pull --rebase origin main"
-
-                        def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front-end.git"
+                        def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/JoEunSae/front-end.git"
                         // 원격 저장소에 푸시
                         sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front_gitops.git main"
                     }
