@@ -6,8 +6,8 @@ pipeline {
         AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
         CONTAINER_REGISTRY = 'goodbirdacr.azurecr.io'
         RESOURCE_GROUP = 'AKS'
-        REPO = 'kwujio/front'
-        IMAGE_NAME = 'kwujio/front:latest'
+        REPO = 'Medicine/front'
+        IMAGE_NAME = 'Medicine/front:latest'
         TAG_VERSION = "v1.0.Beta"
         TAG = "${TAG_VERSION}${env.BUILD_ID}"
         NAMESPACE = 'front'
@@ -43,7 +43,7 @@ pipeline {
                 // 'front_gitops' 저장소에서 파일들을 체크아웃합니다.
                 git branch: 'main',
                     credentialsId: 'jenkins-git-access',
-                    url: 'https://github.com/rlozi99/front_gitops'
+                    url: 'https://github.com/JoEunSae/front-end.git'
             }
         }
 
