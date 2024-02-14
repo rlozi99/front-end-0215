@@ -8,13 +8,11 @@ pipeline {
         RESOURCE_GROUP = 'AKS'
         REPO = 'medicine/front'
         IMAGE_NAME = 'medicine/front:latest'
-        //TAG = 'latest'
 
         TAG_VERSION = "v1.0.Beta"
         TAG = "${TAG_VERSION}${env.BUILD_ID}"
         NAMESPACE = 'front'
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
-        GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
     }
 
     stages {
@@ -33,8 +31,8 @@ pipeline {
 
                         // Build and push Docker image to ACR
                         // 변경: 이미지 이름을 $CONTAINER_REGISTRY/$IMAGE_NAME으로 수정
-                        sh "docker build -t $CONTAINER_REGISTRY/$IMAGE_NAME ."
-                        sh "docker push $CONTAINER_REGISTRY/$IMAGE_NAME"
+                        sh "docker build -t $CONTAINER_REGISTRY/$REPO:$TAG ."
+                        sh "docker push $CONTAINER_REGISTRY/$REPO:$TAG"
                     }
                 }
             }
@@ -59,22 +57,22 @@ pipeline {
                     }
                 }
         stage('Push Changes to GitOps Repository') {
-                    steps {
-                        script {
-                            withCredentials([usernamePassword(credentialsId: 'jenkins-git-access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                                // 현재 브랜치 확인 및 main으로 체크아웃
-                                def currentBranch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                                if (currentBranch != "main") {
-                                    sh "git checkout main"
-                                }
-                                // 원격 저장소에서 최신 변경사항 가져오기
-                                sh "git pull --rebase origin main"
-                                def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/JoEunSae/front-end.git"
-                                // 원격 저장소에 푸시
-                                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front_gitops.git main"
-                            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'jenkins-git-access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        // 현재 브랜치 확인 및 main으로 체크아웃
+                        def currentBranch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                        if (currentBranch != "main") {
+                            sh "git checkout main"
                         }
+                        // 원격 저장소에서 최신 변경사항 가져오기
+                        sh "git pull --rebase origin main"
+                        def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/JoEunSae/front-end.git"
+                        // 원격 저장소에 푸시
+                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front_gitops.git main"
                     }
                 }
             }
         }
+    }
+}
