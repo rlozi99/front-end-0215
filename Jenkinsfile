@@ -13,6 +13,7 @@ pipeline {
         NAMESPACE = 'front'
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
         GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
+        AZURE_ACR_CREDENTIALS_ID = 'acr-credential-id'
     }
 
     stages {
@@ -28,6 +29,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'acr-credential-id', passwordVariable: 'ACR_PASSWORD', usernameVariable: 'ACR_USERNAME')]) {
                         // Log in to ACR
                         sh "az acr login --name $CONTAINER_REGISTRY --username $ACR_USERNAME --password $ACR_PASSWORD"
+
 
                         // Build and push Docker image to ACR
                         // 변경: 이미지 이름을 $CONTAINER_REGISTRY/$IMAGE_NAME으로 수정
