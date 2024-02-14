@@ -6,8 +6,8 @@ pipeline {
                              AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
                              CONTAINER_REGISTRY = 'goodbirdacr'
                              RESOURCE_GROUP = 'AKS'
-                             REPO = 'Medicine/front'
-                             IMAGE_NAME = 'Medicine/front:latest'
+                             REPO = 'medicine/front'
+                             IMAGE_NAME = 'medicine/front:latest'
                              TAG_VERSION = "v1.0.Beta"
                              TAG = "${TAG_VERSION}${env.BUILD_ID}"
                              NAMESPACE = 'front'
@@ -36,7 +36,7 @@ pipeline {
                         // Build and push Docker image to ACR
                         // 변경: 이미지 이름을 $CONTAINER_REGISTRY/$IMAGE_NAME으로 수정
                         sh "docker build -t $CONTAINER_REGISTRY/medicine/front:$TAG ."
-                        sh "docker push $CONTAINER_REGISTRY/$REPO:$TAG"
+                        sh "docker push $CONTAINER_REGISTRY/medicine/front:$TAG"
                     }
                 }
             }
