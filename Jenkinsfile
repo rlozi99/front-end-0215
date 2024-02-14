@@ -1,32 +1,34 @@
 pipeline {
-    agent any
+                         agent any
 
-    environment {
-        AZURE_SUBSCRIPTION_ID = 'c18eced3-5492-4dc9-b1ee-9b278abfdd7f'
-        AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
-        CONTAINER_REGISTRY = 'goodbirdacr.azurecr.io'
-        RESOURCE_GROUP = 'AKS'
-        REPO = 'Medicine/front'
-        IMAGE_NAME = 'Medicine/front:latest'
-        TAG_VERSION = "v1.0.Beta"
-        TAG = "${TAG_VERSION}${env.BUILD_ID}"
-        NAMESPACE = 'front'
-        GIT_CREDENTIALS_ID = 'jenkins-git-access'
-        GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
-        AZURE_ACR_CREDENTIALS_ID = 'acr-credential-id'
-    }
+                         environment {
+                             AZURE_SUBSCRIPTION_ID = 'c18eced3-5492-4dc9-b1ee-9b278abfdd7f'
+                             AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
+                             CONTAINER_REGISTRY = 'goodbirdacr'
+                             RESOURCE_GROUP = 'AKS'
+                             REPO = 'Medicine/front'
+                             IMAGE_NAME = 'Medicine/front:latest'
+                             TAG_VERSION = "v1.0.Beta"
+                             TAG = "${TAG_VERSION}${env.BUILD_ID}"
+                             NAMESPACE = 'front'
+                             GIT_CREDENTIALS_ID = 'jenkins-git-access'
+                             GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
+                             AZURE_ACR_CREDENTIALS_ID = 'acr-credential-id'
+                         }
 
-    stages {
-        stage('Checkout Frontend') {
-            steps {
-                checkout scm
-            }
-        }
+                         stages {
+                             stage('Checkout Frontend') {
+                                 steps {
+                                     checkout scm
+                                 }
+                             }
 
-        stage('Build and Push Docker Image to ACR') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'acr-credential-id', passwordVariable: 'ACR_PASSWORD', usernameVariable: 'ACR_USERNAME')]) {
+                             stage('Build and Push Docker Image to ACR') {
+                                 steps {
+                                     script {
+                                         withCredentials([usernamePassword(credentialsId: 'acr-credential-id', passwordVariable: 'ACR_PASSWORD', usernameVariable: 'ACR_USERNAME')]) {
+
+
                         // Log in to ACR
                         sh "az acr login --name $CONTAINER_REGISTRY --username $ACR_USERNAME --password $ACR_PASSWORD"
 
