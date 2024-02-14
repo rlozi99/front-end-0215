@@ -8,7 +8,13 @@ pipeline {
         RESOURCE_GROUP = 'AKS'
         REPO = 'medicine/front'
         IMAGE_NAME = 'medicine/front:latest'
-        TAG = 'latest'
+        //TAG = 'latest'
+
+        TAG_VERSION = "v1.0.Beta"
+        TAG = "${TAG_VERSION}${env.BUILD_ID}"
+        NAMESPACE = 'front'
+        GIT_CREDENTIALS_ID = 'jenkins-git-access'
+        GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
     }
 
     stages {
@@ -63,7 +69,7 @@ pipeline {
                                 }
                                 // 원격 저장소에서 최신 변경사항 가져오기
                                 sh "git pull --rebase origin main"
-                                def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front-end.git"
+                                def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/JoEunSae/front-end.git"
                                 // 원격 저장소에 푸시
                                 sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front_gitops.git main"
                             }
