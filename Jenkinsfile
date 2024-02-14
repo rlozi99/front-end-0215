@@ -15,6 +15,7 @@ pipeline {
         GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
     }
 
+
     stages {
         stage('Checkout Frontend') {
             steps {
