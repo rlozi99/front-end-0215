@@ -30,7 +30,7 @@ pipeline {
 
 
                         // Log in to ACR
-                        sh "az acr login --name $CONTAINER_REGISTRY --username $ACR_USERNAME --password $ACR_PASSWORD"
+                        sh "az acr login --name goodbirdacr --username $ACR_USERNAME --password $ACR_PASSWORD"
 
 
                         // Build and push Docker image to ACR
