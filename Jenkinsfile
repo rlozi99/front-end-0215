@@ -4,7 +4,7 @@ pipeline {
     environment {
         AZURE_SUBSCRIPTION_ID = 'c18eced3-5492-4dc9-b1ee-9b278abfdd7f'
         AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
-        CONTAINER_REGISTRY = 'goodacr.azurecr.io'
+        CONTAINER_REGISTRY = 'goodbirdacr.azurecr.io'
         RESOURCE_GROUP = 'AKS'
         REPO = 'Medicine/front'
         IMAGE_NAME = 'Medicine/front:latest'
