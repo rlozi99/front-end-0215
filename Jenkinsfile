@@ -1,33 +1,48 @@
 pipeline {
     agent any
-
     environment {
         AZURE_SUBSCRIPTION_ID = 'c8ce3edc-0522-48a3-b7e4-afe8e3d731d9'
-        AZURE_TENANT_ID = 'bac4b78b-fcc2-4614-a32b-b69330b1af9f'
-        CONTAINER_REGISTRY = 'goodacr.azurecr.io'
+        AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
+        CONTAINER_REGISTRY = 'goodbirdacr.azurecr.io'
         RESOURCE_GROUP = 'AKS'
-        REPO = 'kwujio/front'
-        IMAGE_NAME = 'kwujio/front:latest'
+        REPO = 'medicine/back'
+        IMAGE_NAME = 'medicine/back:latest'
         TAG = 'latest'
+        JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
-
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
+        stage('Grant Execute Permission to Gradle Wrapper') {
+                    steps {
+                        sh 'chmod +x ./gradlew'
+                    }
+                }
+ // JAR 파일 빌드 단계 추가
+        stage('Build JAR') {
+            steps {
+                script {
+                    withEnv(['JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64']) {
+                        // Gradle을 사용하여 JAR 파일 빌드
+                        sh './gradlew --version'
+                        sh './gradlew build --warning-mode=none -x test'
+                    }
+                }
+            }
+        }
         stage('Build and Push Docker Image to ACR') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'acr-credential-id', passwordVariable: 'ACR_PASSWORD', usernameVariable: 'ACR_USERNAME')]) {
                         // Log in to ACR
                         sh "az acr login --name $CONTAINER_REGISTRY --username $ACR_USERNAME --password $ACR_PASSWORD"
-
-                        // Build and push Docker image to ACR
-                        // 변경: 이미지 이름을 $CONTAINER_REGISTRY/$IMAGE_NAME으로 수정
-                        sh "docker build -t $CONTAINER_REGISTRY/$IMAGE_NAME ."
+                        // Dockerfile에 있는 JAR 파일을 사용하여 Docker 이미지 빌드
+                        sh "docker build -t $REPO:$TAG ."
+                        // 이미지 태그 지정 및 ACR로 푸시
+                        sh "docker tag $REPO:$TAG $CONTAINER_REGISTRY/$IMAGE_NAME"
                         sh "docker push $CONTAINER_REGISTRY/$IMAGE_NAME"
                     }
                 }
