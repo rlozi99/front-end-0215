@@ -14,6 +14,9 @@ pipeline {
                              GIT_CREDENTIALS_ID = 'jenkins-git-access'
                              GIT_REPO_URL = 'https://github.com/rlozi99/front-end'
                              AZURE_ACR_CREDENTIALS_ID = 'acr-credential-id'
+                             ACR_CLIENT_ID = 'f325d007-d8ec-4c37-a815-c911881691c2'
+                             ACR_CLIENT_SECRET = '98d2978d-9624-4183-b180-e3c22e8c6a27'
+
                          }
 
                          stages {
