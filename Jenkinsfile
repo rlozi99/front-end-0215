@@ -36,7 +36,8 @@ pipeline {
                         // Build and push Docker image to ACR
                         // 변경: 이미지 이름을 $CONTAINER_REGISTRY/$IMAGE_NAME으로 수정
                         sh "docker build -t $CONTAINER_REGISTRY/$REPO:$TAG ."
-                        sh "docker push $CONTAINER_REGISTRY/medicine/front:$TAG"
+                        sh "docker push $CONTAINER_REGISTRY/$IMAGE_NAME:$TAG"
+
                     }
                 }
             }
