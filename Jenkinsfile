@@ -22,6 +22,12 @@ pipeline {
                 checkout scm
             }
         }
+        stage('SonarQube Analysis') {
+            def scannerHome = tool 'sonarqube_scanner';
+            withSonarQubeEnv() {
+            sh "${scannerHome}/bin/sonar-scanner"
+            }
+        }
 
         stage('Build and Push Docker Image to ACR..') {
             steps {
@@ -68,9 +74,9 @@ pipeline {
                         }
                         // 원격 저장소에서 최신 변경사항 가져오기
                         sh "git pull --rebase origin main"
-                        def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/JoEunSae/front-end.git"
+                        def remote = "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front-end-0215.git"
                         // 원격 저장소에 푸시
-                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front_gitops.git main"
+                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/front-end-0215.git main"
                     }
                 }
             }
